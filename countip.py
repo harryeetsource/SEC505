@@ -3,21 +3,24 @@ from tqdm import tqdm
 
 # Load subnets from a file
 with open('block.txt') as f:
-    subnets = [line.strip() for line in f]
+    subnets = [ipaddress.IPv4Network(line.strip()) for line in f]
 
-# Create a set to store unique IP addresses
-unique_ips = set()
+# Sort the subnets by their network address
+subnets.sort(key=lambda net: net.network_address)
 
-# Use tqdm to wrap the iteration and provide a progress bar
-for subnet in tqdm(subnets, desc="Processing subnets", unit="subnet"):
-    # Create an IPv4Network object
-    net = ipaddress.IPv4Network(subnet)
+i = 0
+while i < len(subnets) - 1:
+    # If this subnet overlaps with the next one
+    if subnets[i].overlaps(subnets[i + 1]):
+        # Merge the two subnets
+        merged = ipaddress.collapse_addresses([subnets[i], subnets[i + 1]])
+        # Replace the two original subnets with their merge
+        subnets[i:i+2] = merged
+    else:
+        # Move on to the next subnet
+        i += 1
 
-    # Get a set of all IP addresses in this subnet
-    subnet_ips = set(net)
+# Now that all overlapping subnets have been merged, calculate the total number of unique IPs
+total_ips = sum(net.num_addresses for net in tqdm(subnets, desc="Calculating total IPs", unit="subnet"))
 
-    # Add the IPs from this subnet to the set of unique IPs
-    unique_ips = unique_ips.union(subnet_ips)
-
-# Print the total number of unique IPs
-print(len(unique_ips))
+print(total_ips)
