@@ -1,4 +1,5 @@
 import ipaddress
+from tqdm import tqdm
 
 # Load subnets from a file
 with open('block.txt') as f:
@@ -7,7 +8,8 @@ with open('block.txt') as f:
 # Create a set to store unique IP addresses
 unique_ips = set()
 
-for subnet in subnets:
+# Use tqdm to wrap the iteration and provide a progress bar
+for subnet in tqdm(subnets, desc="Processing subnets", unit="subnet"):
     # Create an IPv4Network object
     net = ipaddress.IPv4Network(subnet)
 
