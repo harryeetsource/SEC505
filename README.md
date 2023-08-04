@@ -14,4 +14,4 @@ Please note that [@JasonFossen](https://twitter.com/jasonfossen) reported the fo
 >
 > they're all in the public domain
  
-14,228,992 IPs blocked
+14,860,288 hostile IPs blocked
